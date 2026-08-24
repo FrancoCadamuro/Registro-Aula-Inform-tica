@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control Aula de Informática</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4 min-h-screen">
+
+  <div class="max-w-7xl mx-auto space-y-4">
+    <!-- Encabezado y Controles -->
+    <header class="bg-white p-4 rounded-lg shadow-sm flex flex-wrap gap-4 justify-between items-center">
+      <h1 class="text-xl font-bold text-gray-800">Mapa de Ocupación - Aula de Informática</h1>
+      <div class="flex flex-wrap gap-3 items-center">
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold">CURSO</label>
+          <select id="courseSelect" onchange="loadStudents()" class="border border-gray-300 rounded p-1.5 text-sm bg-white">
+            <option value="">Seleccionar Curso...</option>
+            <option value="primero_primaria@materpurissima.edu.ar">1.º Primaria</option>
+            <option value="segundo_primaria@materpurissima.edu.ar">2.º Primaria</option>
+            <option value="tercero_primaria@materpurissima.edu.ar">3.º Primaria</option>
+            <option value="cuarto_primaria@materpurissima.edu.ar">4.º Primaria</option>
+            <option value="quinto_primaria@materpurissima.edu.ar">5.º Primaria</option>
+            <option value="sexto_primaria@materpurissima.edu.ar">6.º Primaria</option>
+            <option value="primero_secundaria@materpurissima.edu.ar">1.º Secundaria</option>
+            <option value="segundo_secundaria@materpurissima.edu.ar">2.º Secundaria</option>
+            <option value="tercero_secundaria@materpurissima.edu.ar">3.º Secundaria</option>
+            <option value="cuarto_secundaria@materpurissima.edu.ar">4.º Secundaria</option>
+            <option value="quinto_secundaria@materpurissima.edu.ar">5.º Secundaria</option>
+            <option value="sexto_secundaria@materpurissima.edu.ar">6.º Secundaria</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-500 font-semibold">MÓDULO</label>
+          <select id="moduleSelect" class="border border-gray-300 rounded p-1.5 text-sm bg-white">
+            <option value="7:20 AM">07:20 AM</option>
+            <option value="8:00 AM">08:00 AM</option>
+            <option value="8:50 AM">08:50 AM</option>
+            <option value="9:30 AM">09:30 AM</option>
+            <option value="10:20 AM">10:20 AM</option>
+            <option value="11:00 AM">11:00 AM</option>
+            <option value="11:45 AM">11:45 AM</option>
+            <option value="12:25 PM">12:25 PM</option>
+            <option value="1:05 PM">01:05 PM</option>
+            <option value="1:45 PM">01:45 PM</option>
+            <option value="2:25 PM">02:25 PM</option>
+            <option value="3:10 PM">03:10 PM</option>
+            <option value="3:50 PM">03:50 PM</option>
+            <option value="4:40 PM">04:40 PM</option>
+            <option value="5:20 PM">05:20 PM</option>
+          </select>
+        </div>
+
+        <button onclick="saveSnapshot()" class="bg-green-600 hover:bg-green-700 text-white font-semibold text-sm px-4 py-2 rounded shadow mt-4">
+          Guardar Registro
+        </button>
+      </div>
+    </header>
+
+    <!-- Lista de Alumnos sin asignar -->
+    <section class="bg-white p-4 rounded-lg shadow-sm">
+      <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Alumnos Pendientes de Asignar (<span id="unassignedCount">0</span>)</h2>
+      <div id="unassignedList" class="flex flex-wrap gap-2 min-h-[40px] p-2 bg-gray-50 rounded border border-dashed border-gray-300">
+        <span class="text-gray-400 text-sm">Seleccioná un curso para cargar los alumnos...</span>
+      </div>
+    </section>
+
+    <!-- Panel Visual de 22 PCs -->
+    <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3" id="pcGrid">
+      <!-- Se generan dinámicamente -->
+    </section>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/a/macros/materpurissima.edu.ar/s/AKfycbxcFr-SQhKpEbbaGG8FMEAMe5ID8b7gh7RVgY8ZCNTs8lnB-VCScFF9YSVsJ0wkbZBqkQ/exec"; 
+
+    let allStudents = [];
+    let assignments = {}; 
+    for (let i = 1; i <= 22; i++) {
+      assignments[`PC ${i < 10 ? '0' + i : i}`] = [];
+    }
+
+    let selectedStudent = null;
+
+    function renderPCs() {
+      const grid = document.getElementById('pcGrid');
+      grid.innerHTML = '';
+
+      Object.keys(assignments).forEach(pcKey => {
+        const list = assignments[pcKey];
+        const isFull = list.length >= 4;
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-lg border flex flex-col justify-between h-36 bg-white shadow-sm cursor-pointer hover:border-blue-500 ${selectedStudent ? 'hover:bg-blue-50' : ''}`;
+        card.onclick = () => assignToPC(pcKey);
+
+        let studentsHTML = list.map(s => `
+          <li class="flex justify-between items-center text-xs bg-gray-100 rounded px-1.5 py-0.5 mt-1">
+            <span class="truncate">${s.name}</span>
+            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-red-500 font-bold ml-1">×</button>
+          </li>
+        `).join('');
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center border-b pb-1">
+              <span class="font-bold text-sm text-gray-700">${pcKey}</span>
+              <span class="text-xs ${isFull ? 'text-red-500 font-semibold' : 'text-gray-400'}">${list.length}/4</span>
+            </div>
+            <ul class="mt-1">${studentsHTML || '<span class="text-xs text-gray-300 italic">Libre</span>'}</ul>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function loadStudents() {
+      const groupEmail = document.getElementById('courseSelect').value;
+      if (!groupEmail) return;
+
+      const unassignedList = document.getElementById('unassignedList');
+      unassignedList.innerHTML = '<span class="text-blue-500 text-sm">Cargando alumnos desde Google Workspace...</span>';
+
+      try {
+        const res = await fetch(`${API_URL}?action=getStudents&group=${encodeURIComponent(groupEmail)}`);
+        const json = await res.json();
+
+        if (json.status === 'success') {
+          allStudents = json.data;
+          // Reiniciar asignaciones
+          Object.keys(assignments).forEach(k => assignments[k] = []);
+          renderUnassigned();
+          renderPCs();
+        } else {
+          alert("Error al cargar alumnos: " + json.message);
+        }
+      } catch (e) {
+        alert("Error de conexión con la API.");
+      }
+    }
+
+    function renderUnassigned() {
+      const assignedEmails = Object.values(assignments).flat().map(s => s.email);
+      const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
+
+      document.getElementById('unassignedCount').innerText = unassigned.length;
+      const container = document.getElementById('unassignedList');
+      container.innerHTML = '';
+
+      unassigned.forEach(student => {
+        const btn = document.createElement('button');
+        const isSelected = selectedStudent && selectedStudent.email === student.email;
+        btn.className = `text-xs px-2.5 py-1 rounded-full border transition ${
+          isSelected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+        }`;
+        btn.innerText = student.name;
+        btn.onclick = () => {
+          selectedStudent = isSelected ? null : student;
+          renderUnassigned();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function assignToPC(pcKey) {
+      if (!selectedStudent) return;
+      if (assignments[pcKey].length >= 4) {
+        alert("Esta PC ya tiene el límite máximo de 4 alumnos.");
+        return;
+      }
+      assignments[pcKey].push(selectedStudent);
+      selectedStudent = null;
+      renderUnassigned();
+      renderPCs();
+    }
+
+    function unassignStudent(pcKey, email) {
+      assignments[pcKey] = assignments[pcKey].filter(s => s.email !== email);
+      renderUnassigned();
+      renderPCs();
+    }
+
+    async function saveSnapshot() {
+      const courseSelect = document.getElementById('courseSelect');
+      const courseText = courseSelect.options[courseSelect.selectedIndex].text;
+      const module = document.getElementById('moduleSelect').value;
+      const today = new Date().toISOString().split('T')[0];
+
+      if (!courseSelect.value) {
+        alert("Por favor selecciona un curso primero.");
+        return;
+      }
+
+      const activeAssignments = Object.keys(assignments)
+        .filter(pc => assignments[pc].length > 0)
+        .map(pc => ({ pc: pc, students: assignments[pc] }));
+
+      if (activeAssignments.length === 0) {
+        alert("No hay alumnos asignados a ninguna PC.");
+        return;
+      }
+
+      const payload = {
+        action: 'saveSession',
+        date: today,
+        course: courseText,
+        module: module,
+        assignments: activeAssignments
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert("¡Asignación guardada con éxito!");
+      } catch (e) {
+        alert("Error al guardar en el historial.");
+      }
+    }
+
+    renderPCs();
+  </script>
+</body>
+</html>
