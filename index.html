@@ -3,125 +3,236 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control Aula de Informática</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Control de Aula de Informática - Colegio Mater Purissima</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    :root {
+      --mp-blue: #0F2B5C;
+      --mp-blue-light: #1E4287;
+      --mp-red: #A71D2A;
+      --mp-red-hover: #8B1822;
+      --mp-sky: #00B0E8;
+      --mp-bg: #F4F6F9;
+    }
+    body {
+      background-color: var(--mp-bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .bg-mp-blue { background-color: var(--mp-blue); }
+    .bg-mp-red { background-color: var(--mp-red); }
+    .bg-mp-sky { background-color: var(--mp-sky); }
+    .border-mp-blue { border-color: var(--mp-blue); }
+    .border-mp-red { border-color: var(--mp-red); }
+    .text-mp-blue { color: var(--mp-blue); }
+    .text-mp-red { color: var(--mp-red); }
+    .hover\:bg-mp-red:hover { background-color: var(--mp-red-hover); }
+    .hover\:bg-mp-blue-light:hover { background-color: var(--mp-blue-light); }
+  </style>
 </head>
-<body class="bg-gray-100 p-4 min-h-screen">
+<body class="min-h-screen pb-10">
 
-  <div class="max-w-7xl mx-auto space-y-4">
-    <!-- Encabezado y Controles -->
-    <header class="bg-white p-4 rounded-lg shadow-sm flex flex-wrap gap-4 justify-between items-center">
-      <h1 class="text-xl font-bold text-gray-800">Mapa de Ocupación - Aula de Informática</h1>
-      <div class="flex flex-wrap gap-3 items-center">
+  <!-- CABECERA INSTITUCIONAL -->
+  <header class="bg-mp-blue text-white shadow-md border-b-4 border-mp-red">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+      
+      <!-- LOGO Y TÍTULO DEL COLEGIO -->
+      <div class="flex items-center gap-4">
+        <div class="bg-white p-1.5 rounded-lg shadow-sm flex items-center justify-center min-w-[50px] h-[50px]">
+          <img 
+            src="https://materpurissima.edu.ar/wp-content/uploads/2021/04/cropped-logo-mater.png" 
+            alt="Colegio Mater Purissima" 
+            class="h-10 w-auto object-contain"
+            onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'font-bold text-xs text-mp-blue text-center leading-tight\'>MATER<br>PURISSIMA</span>';"
+          />
+        </div>
         <div>
-          <label class="block text-xs text-gray-500 font-semibold">CURSO</label>
-          <select id="courseSelect" onchange="loadStudents()" class="border border-gray-300 rounded p-1.5 text-sm bg-white">
-            <option value="">Seleccionar Curso...</option>
-            <option value="primero_primaria@materpurissima.edu.ar">1.º Primaria</option>
-            <option value="segundo_primaria@materpurissima.edu.ar">2.º Primaria</option>
-            <option value="tercero_primaria@materpurissima.edu.ar">3.º Primaria</option>
-            <option value="cuarto_primaria@materpurissima.edu.ar">4.º Primaria</option>
-            <option value="quinto_primaria@materpurissima.edu.ar">5.º Primaria</option>
-            <option value="sexto_primaria@materpurissima.edu.ar">6.º Primaria</option>
-            <option value="primero_secundaria@materpurissima.edu.ar">1.º Secundaria</option>
-            <option value="segundo_secundaria@materpurissima.edu.ar">2.º Secundaria</option>
-            <option value="tercero_secundaria@materpurissima.edu.ar">3.º Secundaria</option>
-            <option value="cuarto_secundaria@materpurissima.edu.ar">4.º Secundaria</option>
-            <option value="quinto_secundaria@materpurissima.edu.ar">5.º Secundaria</option>
-            <option value="sexto_secundaria@materpurissima.edu.ar">6.º Secundaria</option>
+          <h1 class="text-lg md:text-xl font-bold tracking-wide uppercase">Colegio Mater Purissima</h1>
+          <p class="text-xs text-blue-200 font-medium">Control y Mapa de Ocupación - Aula de Informática</p>
+        </div>
+      </div>
+
+      <!-- CONTROLES PRINCIPALES (CURSO, MÓDULO, BOTÓN GUARDAR) -->
+      <div class="flex flex-wrap gap-3 items-center bg-white/10 p-2.5 rounded-xl backdrop-blur-sm border border-white/10 w-full md:w-auto justify-end">
+        
+        <!-- SELECCIÓN DE CURSO -->
+        <div>
+          <label for="courseSelect" class="block text-[10px] text-blue-100 font-bold uppercase tracking-wider mb-0.5">Curso</label>
+          <select id="courseSelect" onchange="loadStudents()" class="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="">-- Seleccionar Curso --</option>
+            <optgroup label="Nivel Primario">
+              <option value="primero_primaria@materpurissima.edu.ar">1.º Grado Primaria</option>
+              <option value="segundo_primaria@materpurissima.edu.ar">2.º Grado Primaria</option>
+              <option value="tercero_primaria@materpurissima.edu.ar">3.º Grado Primaria</option>
+              <option value="cuarto_primaria@materpurissima.edu.ar">4.º Grado Primaria</option>
+              <option value="quinto_primaria@materpurissima.edu.ar">5.º Grado Primaria</option>
+              <option value="sexto_primaria@materpurissima.edu.ar">6.º Grado Primaria</option>
+            </optgroup>
+            <optgroup label="Nivel Secundario">
+              <option value="primero_secundaria@materpurissima.edu.ar">1.º Año Secundaria</option>
+              <option value="segundo_secundaria@materpurissima.edu.ar">2.º Año Secundaria</option>
+              <option value="tercero_secundaria@materpurissima.edu.ar">3.º Año Secundaria</option>
+              <option value="cuarto_secundaria@materpurissima.edu.ar">4.º Año Secundaria</option>
+              <option value="quinto_secundaria@materpurissima.edu.ar">5.º Año Secundaria</option>
+              <option value="sexto_secundaria@materpurissima.edu.ar">6.º Año Secundaria</option>
+            </optgroup>
           </select>
         </div>
 
+        <!-- SELECCIÓN DE MÓDULO -->
         <div>
-          <label class="block text-xs text-gray-500 font-semibold">MÓDULO</label>
-          <select id="moduleSelect" class="border border-gray-300 rounded p-1.5 text-sm bg-white">
-            <option value="7:20 AM">07:20 AM</option>
-            <option value="8:00 AM">08:00 AM</option>
-            <option value="8:50 AM">08:50 AM</option>
-            <option value="9:30 AM">09:30 AM</option>
+          <label for="moduleSelect" class="block text-[10px] text-blue-100 font-bold uppercase tracking-wider mb-0.5">Módulo / Horario</label>
+          <select id="moduleSelect" class="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="07:20 AM">07:20 AM</option>
+            <option value="08:00 AM">08:00 AM</option>
+            <option value="08:50 AM">08:50 AM</option>
+            <option value="09:30 AM">09:30 AM</option>
             <option value="10:20 AM">10:20 AM</option>
             <option value="11:00 AM">11:00 AM</option>
             <option value="11:45 AM">11:45 AM</option>
             <option value="12:25 PM">12:25 PM</option>
-            <option value="1:05 PM">01:05 PM</option>
-            <option value="1:45 PM">01:45 PM</option>
-            <option value="2:25 PM">02:25 PM</option>
-            <option value="3:10 PM">03:10 PM</option>
-            <option value="3:50 PM">03:50 PM</option>
-            <option value="4:40 PM">04:40 PM</option>
-            <option value="5:20 PM">05:20 PM</option>
+            <option value="01:05 PM">01:05 PM</option>
+            <option value="01:45 PM">01:45 PM</option>
+            <option value="02:25 PM">02:25 PM</option>
+            <option value="03:10 PM">03:10 PM</option>
+            <option value="03:50 PM">03:50 PM</option>
+            <option value="04:40 PM">04:40 PM</option>
+            <option value="05:20 PM">05:20 PM</option>
           </select>
         </div>
 
-        <button onclick="saveSnapshot()" class="bg-green-600 hover:bg-green-700 text-white font-semibold text-sm px-4 py-2 rounded shadow mt-4">
-          Guardar Registro
-        </button>
-      </div>
-    </header>
+        <!-- BOTÓN DE GUARDAR -->
+        <div class="pt-3">
+          <button id="saveBtn" onclick="saveSnapshot()" class="bg-mp-red hover:bg-mp-red-hover text-white font-bold text-xs px-4 py-2 rounded-md shadow flex items-center gap-1.5 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+            <span>Guardar Registro</span>
+          </button>
+        </div>
 
-    <!-- Lista de Alumnos sin asignar -->
-    <section class="bg-white p-4 rounded-lg shadow-sm">
-      <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Alumnos Pendientes de Asignar (<span id="unassignedCount">0</span>)</h2>
-      <div id="unassignedList" class="flex flex-wrap gap-2 min-h-[40px] p-2 bg-gray-50 rounded border border-dashed border-gray-300">
-        <span class="text-gray-400 text-sm">Seleccioná un curso para cargar los alumnos...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-7xl mx-auto px-4 mt-6 space-y-5">
+
+    <!-- SECCIÓN: ALUMNOS PENDIENTES DE ASIGNAR -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div class="flex justify-between items-center mb-2.5">
+        <h2 class="text-xs font-bold text-mp-blue uppercase tracking-wider flex items-center gap-2">
+          <span>Alumnos Pendientes de Asignar</span>
+          <span id="unassignedCountBadge" class="bg-blue-100 text-mp-blue text-[11px] px-2 py-0.5 rounded-full font-extrabold">0</span>
+        </h2>
+        <span class="text-[11px] text-gray-500 italic">Haz clic en un alumno y luego en la PC correspondiente</span>
+      </div>
+
+      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[48px] p-2.5 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
+        <span class="text-gray-400 text-xs italic">Seleccioná un curso para cargar los integrantes del grupo...</span>
       </div>
     </section>
 
-    <!-- Panel Visual de 22 PCs -->
-    <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3" id="pcGrid">
-      <!-- Se generan dinámicamente -->
-    </section>
-  </div>
+    <!-- PANEL VISUAL DE COMPUTADORAS (22 PCs) -->
+    <section>
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Distribución del Aula (22 Equipos - Máx. 4 alumnos por PC)</h2>
+        <div class="flex gap-3 text-[11px] font-semibold text-gray-500">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Libre</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> En uso</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> Completo (4/4)</span>
+        </div>
+      </div>
 
+      <div id="pcGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <!-- Las 22 computadoras se renderizan dinámicamente con JavaScript -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LÓGICA JAVASCRIPT -->
   <script>
-    const API_URL = "https://script.google.com/a/macros/materpurissima.edu.ar/s/AKfycbxcFr-SQhKpEbbaGG8FMEAMe5ID8b7gh7RVgY8ZCNTs8lnB-VCScFF9YSVsJ0wkbZBqkQ/exec"; 
+    // ==========================================
+    // REEMPLAZÁ CON LA URL DE TU GOOGLE APPS SCRIPT
+    // ==========================================
+    const API_URL = "https://script.google.com/macros/s/AKfycbxcFr-SQhKpEbbaGG8FMEAMe5ID8b7gh7RVgY8ZCNTs8lnB-VCScFF9YSVsJ0wkbZBqkQ/exec"; 
+
+    // Definición exacta de las 22 computadoras
+    const pcList = [
+      'PC 01', 'PC 02', 'PC 03', 'PC 04',
+      'PC 05-A', 'PC 05-B',
+      'PC 06', 'PC 07', 'PC 08', 'PC 09', 'PC 10',
+      'PC 11', 'PC 12', 'PC 13', 'PC 14', 'PC 15',
+      'PC 16', 'PC 17', 'PC 18', 'PC 19', 'PC 20', 'PC 21'
+    ];
 
     let allStudents = [];
     let assignments = {}; 
-    for (let i = 1; i <= 22; i++) {
-      assignments[`PC ${i < 10 ? '0' + i : i}`] = [];
-    }
+
+    // Inicializar estructura de asignaciones para las 22 PCs
+    pcList.forEach(pc => {
+      assignments[pc] = [];
+    });
 
     let selectedStudent = null;
 
+    // Renderizar las 22 PCs en pantalla
     function renderPCs() {
       const grid = document.getElementById('pcGrid');
       grid.innerHTML = '';
 
-      Object.keys(assignments).forEach(pcKey => {
-        const list = assignments[pcKey];
-        const isFull = list.length >= 4;
+      pcList.forEach(pcKey => {
+        const list = assignments[pcKey] || [];
+        const count = list.length;
+        const isFull = count >= 4;
+        const isEmpty = count === 0;
+
+        let statusColorClass = 'border-gray-200 hover:border-mp-blue';
+        let badgeColorClass = 'bg-emerald-100 text-emerald-800';
+        
+        if (isFull) {
+          statusColorClass = 'border-red-300 bg-red-50/20';
+          badgeColorClass = 'bg-red-100 text-red-800 font-bold';
+        } else if (!isEmpty) {
+          statusColorClass = 'border-blue-300 bg-blue-50/20';
+          badgeColorClass = 'bg-blue-100 text-blue-800 font-bold';
+        }
+
+        const isHighlighted = selectedStudent && !isFull;
 
         const card = document.createElement('div');
-        card.className = `p-3 rounded-lg border flex flex-col justify-between h-36 bg-white shadow-sm cursor-pointer hover:border-blue-500 ${selectedStudent ? 'hover:bg-blue-50' : ''}`;
+        card.className = `p-3 rounded-xl border-2 transition-all bg-white shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer relative ${statusColorClass} ${isHighlighted ? 'ring-2 ring-blue-400 ring-offset-1 bg-blue-50/40' : ''}`;
         card.onclick = () => assignToPC(pcKey);
 
         let studentsHTML = list.map(s => `
-          <li class="flex justify-between items-center text-xs bg-gray-100 rounded px-1.5 py-0.5 mt-1">
-            <span class="truncate">${s.name}</span>
-            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-red-500 font-bold ml-1">×</button>
+          <li class="flex justify-between items-center text-[11px] bg-white border border-gray-200 rounded px-2 py-1 mt-1 shadow-2xs group hover:border-red-300">
+            <span class="truncate font-medium text-gray-800" title="${s.name}">${s.name}</span>
+            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-gray-400 hover:text-red-600 font-bold ml-1 px-1 rounded" title="Quitar de esta PC">×</button>
           </li>
         `).join('');
 
         card.innerHTML = `
           <div>
-            <div class="flex justify-between items-center border-b pb-1">
-              <span class="font-bold text-sm text-gray-700">${pcKey}</span>
-              <span class="text-xs ${isFull ? 'text-red-500 font-semibold' : 'text-gray-400'}">${list.length}/4</span>
+            <div class="flex justify-between items-center border-b pb-1.5 mb-1">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-mp-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <span class="font-extrabold text-xs text-mp-blue tracking-wide">${pcKey}</span>
+              </div>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-full ${badgeColorClass}">${count}/4</span>
             </div>
-            <ul class="mt-1">${studentsHTML || '<span class="text-xs text-gray-300 italic">Libre</span>'}</ul>
+            <ul class="space-y-0.5">${studentsHTML || '<div class="text-[11px] text-gray-300 italic pt-3 text-center">Disponible</div>'}</ul>
           </div>
+          ${isHighlighted ? '<div class="text-[10px] text-blue-600 font-bold text-center mt-2 bg-blue-100/80 rounded py-0.5">+ Asignar aquí</div>' : ''}
         `;
         grid.appendChild(card);
       });
     }
 
+    // Cargar los alumnos del grupo seleccionado mediante Apps Script API
     async function loadStudents() {
       const groupEmail = document.getElementById('courseSelect').value;
       if (!groupEmail) return;
 
       const unassignedList = document.getElementById('unassignedList');
-      unassignedList.innerHTML = '<span class="text-blue-500 text-sm">Cargando alumnos desde Google Workspace...</span>';
+      unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-mp-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Cargando miembros del grupo Google Workspace...</span>';
 
       try {
         const res = await fetch(`${API_URL}?action=getStudents&group=${encodeURIComponent(groupEmail)}`);
@@ -129,45 +240,58 @@
 
         if (json.status === 'success') {
           allStudents = json.data;
-          // Reiniciar asignaciones
-          Object.keys(assignments).forEach(k => assignments[k] = []);
+          
+          // Limpiar las asignaciones al cambiar de curso
+          pcList.forEach(pc => assignments[pc] = []);
+          selectedStudent = null;
+          
           renderUnassigned();
           renderPCs();
         } else {
-          alert("Error al cargar alumnos: " + json.message);
+          unassignedList.innerHTML = `<span class="text-red-600 text-xs font-semibold">Error: ${json.message}</span>`;
         }
       } catch (e) {
-        alert("Error de conexión con la API.");
+        unassignedList.innerHTML = '<span class="text-red-600 text-xs font-semibold">No se pudo obtener el grupo. Verifica el despliegue del script.</span>';
       }
     }
 
+    // Renderizar lista de alumnos sin computadora asignada
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
 
-      document.getElementById('unassignedCount').innerText = unassigned.length;
+      document.getElementById('unassignedCountBadge').innerText = unassigned.length;
       const container = document.getElementById('unassignedList');
       container.innerHTML = '';
+
+      if (unassigned.length === 0 && allStudents.length > 0) {
+        container.innerHTML = '<span class="text-emerald-700 text-xs font-bold">¡Todos los alumnos han sido asignados a las computadoras!</span>';
+        return;
+      }
 
       unassigned.forEach(student => {
         const btn = document.createElement('button');
         const isSelected = selectedStudent && selectedStudent.email === student.email;
-        btn.className = `text-xs px-2.5 py-1 rounded-full border transition ${
-          isSelected ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+        btn.className = `text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
+          isSelected 
+            ? 'bg-mp-blue text-white border-mp-blue shadow-md scale-105 ring-2 ring-blue-300' 
+            : 'bg-white text-gray-700 border-gray-300 hover:border-mp-blue hover:text-mp-blue'
         }`;
         btn.innerText = student.name;
         btn.onclick = () => {
           selectedStudent = isSelected ? null : student;
           renderUnassigned();
+          renderPCs();
         };
         container.appendChild(btn);
       });
     }
 
+    // Asignar alumno seleccionado a una PC
     function assignToPC(pcKey) {
       if (!selectedStudent) return;
       if (assignments[pcKey].length >= 4) {
-        alert("Esta PC ya tiene el límite máximo de 4 alumnos.");
+        alert("La computadora " + pcKey + " ya alcanzó el límite máximo de 4 alumnos.");
         return;
       }
       assignments[pcKey].push(selectedStudent);
@@ -176,12 +300,14 @@
       renderPCs();
     }
 
+    // Desasignar alumno de una PC
     function unassignStudent(pcKey, email) {
       assignments[pcKey] = assignments[pcKey].filter(s => s.email !== email);
       renderUnassigned();
       renderPCs();
     }
 
+    // Guardar la distribución en la planilla de Google Sheets
     async function saveSnapshot() {
       const courseSelect = document.getElementById('courseSelect');
       const courseText = courseSelect.options[courseSelect.selectedIndex].text;
@@ -189,7 +315,7 @@
       const today = new Date().toISOString().split('T')[0];
 
       if (!courseSelect.value) {
-        alert("Por favor selecciona un curso primero.");
+        alert("Por favor selecciona un curso antes de guardar.");
         return;
       }
 
@@ -198,9 +324,14 @@
         .map(pc => ({ pc: pc, students: assignments[pc] }));
 
       if (activeAssignments.length === 0) {
-        alert("No hay alumnos asignados a ninguna PC.");
+        alert("No hay alumnos asignados a ninguna computadora.");
         return;
       }
+
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      saveBtn.innerHTML = `<span>Guardando...</span>`;
 
       const payload = {
         action: 'saveSession',
@@ -217,12 +348,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        alert("¡Asignación guardada con éxito!");
+        alert("¡Registro de distribución guardado con éxito en la planilla de cálculo!");
       } catch (e) {
-        alert("Error al guardar en el historial.");
+        alert("Ocurrió un problema al enviar la información a Google Sheets.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        saveBtn.innerHTML = `
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+          <span>Guardar Registro</span>
+        `;
       }
     }
 
+    // Renderizado inicial
     renderPCs();
   </script>
 </body>
