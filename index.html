@@ -39,7 +39,7 @@
       <div class="flex items-center gap-4">
         <div class="bg-white p-1.5 rounded-lg shadow-sm flex items-center justify-center min-w-[50px] h-[50px]">
           <img 
-            src="Logo MP - png (1).png" 
+            src="logo.png" 
             alt="Colegio Mater Purissima" 
             class="h-10 w-auto object-contain"
           />
@@ -344,7 +344,7 @@
         await fetch(API_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload)
         });
         alert("¡Registro de distribución guardado con éxito en la planilla de cálculo!");
