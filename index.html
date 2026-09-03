@@ -25,6 +25,7 @@
 </head>
 <body class="min-h-screen pb-10">
 
+  <!-- CABECERA INSTITUCIONAL -->
   <header class="bg-mp-blue text-white shadow-md border-b-4 border-red-700">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
       
@@ -93,22 +94,25 @@
     </div>
   </header>
 
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="max-w-7xl mx-auto px-4 mt-5 space-y-4">
 
+    <!-- RESUMEN DE ALUMNOS PENDIENTES DE ASIGNAR -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-3.5">
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-xs font-bold text-mp-blue uppercase tracking-wider flex items-center gap-2">
           <span>Alumnos Pendientes de Asignar</span>
           <span id="unassignedCountBadge" class="bg-blue-100 text-mp-blue text-[11px] px-2 py-0.5 rounded-full font-bold">0</span>
         </h2>
-        <span class="text-[11px] text-gray-400 italic">Ordenados alfabéticamente por Apellido</span>
+        <span class="text-[11px] text-gray-400 italic">Haz clic en un alumno para seleccionarlo y asignarlo a una PC</span>
       </div>
 
-      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[38px] p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
+      <div id="unassignedList" class="flex flex-col gap-2 min-h-[38px] p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300">
         <span class="text-gray-400 text-xs italic">Selecciona un curso para cargar los alumnos...</span>
       </div>
     </section>
 
+    <!-- DISTRIBUCIÓN DE PCS -->
     <section>
       <div class="flex justify-between items-center mb-2.5">
         <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Distribución del Aula (22 Equipos - Máx. 4 por PC)</h2>
@@ -120,14 +124,17 @@
       </div>
 
       <div id="pcGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        </div>
+        <!-- Render dinámico -->
+      </div>
     </section>
 
   </main>
 
+  <!-- VENTANA FLOTANTE (MODAL COMPACTA) -->
   <div id="pcModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col border border-gray-200" style="max-height: 85vh;">
       
+      <!-- Encabezado con Botón Salir (✕) -->
       <div class="bg-mp-blue text-white px-4 py-3 flex justify-between items-center">
         <div>
           <h3 id="modalPcTitle" class="font-bold text-sm">Asignar alumnos</h3>
@@ -138,6 +145,7 @@
         </button>
       </div>
 
+      <!-- Buscador por Apellido / Nombre -->
       <div class="p-2.5 bg-gray-50 border-b border-gray-200">
         <div class="relative">
           <input 
@@ -151,9 +159,12 @@
         </div>
       </div>
 
+      <!-- Lista acotada con scroll (Máx 260px) -->
       <div id="modalStudentList" class="p-2 overflow-y-auto space-y-1 flex-1" style="max-height: 260px; min-height: 100px;">
-        </div>
+        <!-- Lista de checkboxes -->
+      </div>
 
+      <!-- Pie con Botonera -->
       <div class="p-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
         <span id="modalSelectionCount" class="text-[11px] font-bold text-mp-blue">0 seleccionados</span>
         <div class="flex gap-2">
@@ -182,6 +193,7 @@
 
     let allStudents = [];
     let assignments = {}; 
+    let selectedTopStudents = []; // Alumnos seleccionados haciendo clic directo en la lista superior
     let currentModalPC = null;
     let modalSelectedEmails = [];
 
@@ -228,6 +240,7 @@
           allStudents = json.data.map(parseStudent);
           allStudents.sort((a, b) => a.surname.localeCompare(b.surname, 'es', { sensitivity: 'base' }));
 
+          selectedTopStudents = [];
           pcList.forEach(pc => assignments[pc] = []);
           renderUnassigned();
           renderPCs();
@@ -239,9 +252,53 @@
       }
     }
 
+    // FORMA 1: SELECCIÓN DIRECTA DESDE LA LISTA SUPERIOR
+    function toggleTopStudentSelection(email) {
+      const student = allStudents.find(s => s.email === email);
+      if (!student) return;
+
+      const index = selectedTopStudents.findIndex(s => s.email === email);
+      if (index > -1) {
+        selectedTopStudents.splice(index, 1);
+      } else {
+        selectedTopStudents.push(student);
+      }
+
+      renderUnassigned();
+      renderPCs();
+    }
+
+    function clearTopSelection() {
+      selectedTopStudents = [];
+      renderUnassigned();
+      renderPCs();
+    }
+
+    function assignTopSelectedToPC(pcKey) {
+      if (selectedTopStudents.length === 0) return;
+
+      const currentCount = assignments[pcKey].length;
+      const availableSlots = 4 - currentCount;
+
+      if (selectedTopStudents.length > availableSlots) {
+        alert(`La PC ${pcKey} solo tiene ${availableSlots} vacante(s) disponible(s). Desmarca alumnos o elige otra PC.`);
+        return;
+      }
+
+      assignments[pcKey].push(...selectedTopStudents);
+      selectedTopStudents = [];
+
+      renderUnassigned();
+      renderPCs();
+    }
+
+    // RENDERIZAR LISTA SUPERIOR DE PENDIENTES
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
+
+      // Limpiar seleccionados que ya se asignaron
+      selectedTopStudents = selectedTopStudents.filter(s => !assignedEmails.includes(s.email));
 
       document.getElementById('unassignedCountBadge').innerText = unassigned.length;
       const container = document.getElementById('unassignedList');
@@ -252,17 +309,51 @@
         return;
       }
 
+      // Banner indicando selección de la lista superior
+      if (selectedTopStudents.length > 0) {
+        const banner = document.createElement('div');
+        banner.className = 'w-full bg-blue-50 border border-blue-200 text-blue-900 rounded-lg p-2 flex justify-between items-center text-xs shadow-xs mb-1';
+        banner.innerHTML = `
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="font-bold text-mp-blue">📌 ${selectedTopStudents.length} alumno(s) seleccionado(s):</span>
+            <span class="font-semibold text-gray-800">${selectedTopStudents.map(s => s.name).join(', ')}</span>
+            <span class="text-gray-500 italic text-[11px]">— Toca "➕ Asignar aquí" en la PC deseada.</span>
+          </div>
+          <button onclick="clearTopSelection()" class="text-xs font-bold text-red-600 hover:text-red-800 hover:underline ml-2">
+            Desmarcar
+          </button>
+        `;
+        container.appendChild(banner);
+      }
+
+      const chipsContainer = document.createElement('div');
+      chipsContainer.className = 'flex flex-wrap gap-1.5 w-full items-center';
+
       unassigned.forEach(student => {
-        const chip = document.createElement('span');
-        chip.className = 'text-[11px] px-2 py-0.5 rounded bg-white border border-gray-300 text-gray-700 font-medium shadow-2xs';
-        chip.innerText = student.name;
-        container.appendChild(chip);
+        const isSelected = selectedTopStudents.some(s => s.email === student.email);
+        const chip = document.createElement('button');
+        
+        if (isSelected) {
+          chip.className = 'text-[11px] px-2.5 py-1 rounded bg-mp-blue text-white font-bold shadow-md flex items-center gap-1 border border-blue-900 transition-all transform scale-105';
+          chip.innerHTML = `<span>${student.name}</span><span class="text-[9px] bg-white/20 px-1 rounded">✓</span>`;
+        } else {
+          chip.className = 'text-[11px] px-2 py-0.5 rounded bg-white border border-gray-300 text-gray-700 font-medium shadow-2xs hover:border-mp-blue hover:text-mp-blue transition-all cursor-pointer';
+          chip.innerText = student.name;
+        }
+
+        chip.onclick = () => toggleTopStudentSelection(student.email);
+        chipsContainer.appendChild(chip);
       });
+
+      container.appendChild(chipsContainer);
     }
 
+    // RENDERIZAR TARJETAS DE PC
     function renderPCs() {
       const grid = document.getElementById('pcGrid');
       grid.innerHTML = '';
+
+      const hasTopSelection = selectedTopStudents.length > 0;
 
       pcList.forEach(pcKey => {
         const list = assignments[pcKey] || [];
@@ -290,6 +381,26 @@
           </li>
         `).join('');
 
+        let actionButtonHTML = '';
+
+        if (!isFull) {
+          if (hasTopSelection) {
+            // Asignación rápida desde la selección superior
+            actionButtonHTML = `
+              <button onclick="assignTopSelectedToPC('${pcKey}')" class="w-full text-[10px] text-white font-bold text-center mt-2 bg-emerald-600 hover:bg-emerald-700 rounded py-1.5 shadow-xs transition-all animate-pulse">
+                ➕ Asignar aquí (${selectedTopStudents.length})
+              </button>
+            `;
+          } else {
+            // Abrir ventana flotante
+            actionButtonHTML = `
+              <button onclick="openPCModal('${pcKey}')" class="w-full text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">
+                + Asignar alumnos
+              </button>
+            `;
+          }
+        }
+
         card.innerHTML = `
           <div>
             <div class="flex justify-between items-center border-b pb-1 mb-1">
@@ -298,17 +409,13 @@
             </div>
             <ul class="space-y-0.5">${studentsHTML || '<div class="text-[10px] text-gray-300 italic pt-2 text-center">Vacío</div>'}</ul>
           </div>
-          ${!isFull ? `
-            <button onclick="openPCModal('${pcKey}')" class="w-full text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">
-              + Asignar alumnos
-            </button>
-          ` : ''}
+          ${actionButtonHTML}
         `;
         grid.appendChild(card);
       });
     }
 
-    // LÓGICA DE LA VENTANA FLOTANTE
+    // FORMA 2: VENTANA FLOTANTE (MODAL CON BÚSQUEDA)
     function openPCModal(pcKey) {
       currentModalPC = pcKey;
       modalSelectedEmails = [];
