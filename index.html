@@ -39,7 +39,7 @@
       <div class="flex items-center gap-4">
         <div class="bg-white p-1.5 rounded-lg shadow-sm flex items-center justify-center min-w-[50px] h-[50px]">
           <img 
-            src="Logomater.png" 
+            src="logo.png" 
             alt="Colegio Mater Purissima" 
             class="h-10 w-auto object-contain"
           />
@@ -50,7 +50,7 @@
         </div>
       </div>
 
-      <!-- CONTROLES PRINCIPALES (CURSO, MÓDULO, BOTÓN GUARDAR) -->
+      <!-- CONTROLES PRINCIPALES -->
       <div class="flex flex-wrap gap-3 items-center bg-white/10 p-2.5 rounded-xl backdrop-blur-sm border border-white/10 w-full md:w-auto justify-end">
         
         <!-- SELECCIÓN DE CURSO -->
@@ -114,22 +114,22 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="max-w-7xl mx-auto px-4 mt-6 space-y-5">
 
-    <!-- SECCIÓN: ALUMNOS PENDIENTES DE ASIGNAR -->
+    <!-- RESUMEN DE PENDIENTES -->
     <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-      <div class="flex justify-between items-center mb-2.5">
+      <div class="flex justify-between items-center mb-2">
         <h2 class="text-xs font-bold text-mp-blue uppercase tracking-wider flex items-center gap-2">
           <span>Alumnos Pendientes de Asignar</span>
           <span id="unassignedCountBadge" class="bg-blue-100 text-mp-blue text-[11px] px-2 py-0.5 rounded-full font-extrabold">0</span>
         </h2>
-        <span class="text-[11px] text-gray-500 italic">Haz clic en un alumno y luego en la PC correspondiente</span>
+        <span class="text-[11px] text-gray-500 italic">Haz clic en cualquier equipo (PC) para buscar y asignar alumnos</span>
       </div>
 
-      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[48px] p-2.5 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
-        <span class="text-gray-400 text-xs italic">Seleccioná un curso para cargar los integrantes del grupo...</span>
+      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[42px] p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
+        <span class="text-gray-400 text-xs italic">Seleccioná un curso para cargar la lista ordenada por apellido...</span>
       </div>
     </section>
 
-    <!-- PANEL VISUAL DE COMPUTADORAS (22 PCs) -->
+    <!-- PANEL DE COMPUTADORAS (22 PCs) -->
     <section>
       <div class="flex justify-between items-center mb-3">
         <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Distribución del Aula (22 Equipos - Máx. 4 alumnos por PC)</h2>
@@ -141,20 +141,62 @@
       </div>
 
       <div id="pcGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        <!-- Las 22 computadoras se renderizan dinámicamente con JavaScript -->
+        <!-- Se genera dinámicamente -->
       </div>
     </section>
 
   </main>
 
+  <!-- VENTANA FLOTANTE / MODAL DE ASIGNACIÓN MULTIPLE -->
+  <div id="pcModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Encabezado Modal -->
+      <div class="bg-mp-blue text-white px-5 py-3.5 flex justify-between items-center">
+        <div>
+          <h3 id="modalPcTitle" class="font-bold text-sm md:text-base">Asignar alumnos a PC</h3>
+          <p id="modalPcSubtitle" class="text-xs text-blue-200">Vacantes disponibles: 4</p>
+        </div>
+        <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl font-bold leading-none">&times;</button>
+      </div>
+
+      <!-- Buscador por Apellido / Nombre / Email -->
+      <div class="p-3 border-b bg-gray-50 flex gap-2 items-center">
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            id="modalSearchInput" 
+            oninput="renderModalStudents()" 
+            placeholder="🔍 Buscar por apellido, nombre o correo..." 
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-mp-blue focus:outline-none"
+          >
+        </div>
+        <button onclick="clearModalSearch()" class="text-xs text-gray-500 hover:text-red-600 px-2 font-medium">Limpiar</button>
+      </div>
+
+      <!-- Lista de Alumnos Seleccionables -->
+      <div id="modalStudentList" class="p-4 overflow-y-auto space-y-1.5 flex-1 max-h-[320px]">
+        <!-- Render dinámico con checkboxes -->
+      </div>
+
+      <!-- Pie del Modal -->
+      <div class="p-3.5 border-t bg-gray-50 flex justify-between items-center">
+        <span id="modalSelectionCount" class="text-xs font-bold text-mp-blue">0 seleccionados</span>
+        <div class="flex gap-2">
+          <button onclick="closeModal()" class="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-200 rounded-lg">Cancelar</button>
+          <button id="modalConfirmBtn" onclick="confirmModalAssignment()" class="px-4 py-1.5 text-xs font-bold bg-mp-blue text-white rounded-lg hover:bg-mp-blue-light transition-all shadow">
+            Asignar a la PC
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- LÓGICA JAVASCRIPT -->
   <script>
-    // ==========================================
-    // REEMPLAZÁ CON LA URL DE TU GOOGLE APPS SCRIPT
-    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbxcFr-SQhKpEbbaGG8FMEAMe5ID8b7gh7RVgY8ZCNTs8lnB-VCScFF9YSVsJ0wkbZBqkQ/exec"; 
 
-    // Definición exacta de las 22 computadoras
     const pcList = [
       'PC 01', 'PC 02', 'PC 03', 'PC 04',
       'PC 05-A', 'PC 05-B',
@@ -165,84 +207,62 @@
 
     let allStudents = [];
     let assignments = {}; 
+    let currentModalPC = null;
+    let modalSelectedEmails = [];
 
-    // Inicializar estructura de asignaciones para las 22 PCs
-    pcList.forEach(pc => {
-      assignments[pc] = [];
-    });
+    // Inicializar PCs
+    pcList.forEach(pc => assignments[pc] = []);
 
-    let selectedStudent = null;
+    // Procesar y formatear Nombre / Apellido
+    function parseStudent(student) {
+      const email = student.email || '';
+      const username = email.split('@')[0] || '';
+      
+      // Patrón: 1 letra inicial + Apellido + 3 dígitos DNI (ej: jtavano968)
+      const match = username.match(/^([a-zA-Z])([a-zA-Z]+?)(\d{3})$/);
+      let surname = '';
+      let initial = '';
+      let displayName = '';
 
-    // Renderizar las 22 PCs en pantalla
-    function renderPCs() {
-      const grid = document.getElementById('pcGrid');
-      grid.innerHTML = '';
+      if (match) {
+        initial = match[1].toUpperCase();
+        const rawSurname = match[2];
+        surname = rawSurname.charAt(0).toUpperCase() + rawSurname.slice(1).toLowerCase();
+        displayName = `${surname}, ${initial}.`;
+      } else {
+        // Formato de reserva si varía la estructura
+        const rawName = student.name || username;
+        surname = rawName;
+        displayName = rawName;
+      }
 
-      pcList.forEach(pcKey => {
-        const list = assignments[pcKey] || [];
-        const count = list.length;
-        const isFull = count >= 4;
-        const isEmpty = count === 0;
-
-        let statusColorClass = 'border-gray-200 hover:border-mp-blue';
-        let badgeColorClass = 'bg-emerald-100 text-emerald-800';
-        
-        if (isFull) {
-          statusColorClass = 'border-red-300 bg-red-50/20';
-          badgeColorClass = 'bg-red-100 text-red-800 font-bold';
-        } else if (!isEmpty) {
-          statusColorClass = 'border-blue-300 bg-blue-50/20';
-          badgeColorClass = 'bg-blue-100 text-blue-800 font-bold';
-        }
-
-        const isHighlighted = selectedStudent && !isFull;
-
-        const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border-2 transition-all bg-white shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer relative ${statusColorClass} ${isHighlighted ? 'ring-2 ring-blue-400 ring-offset-1 bg-blue-50/40' : ''}`;
-        card.onclick = () => assignToPC(pcKey);
-
-        let studentsHTML = list.map(s => `
-          <li class="flex justify-between items-center text-[11px] bg-white border border-gray-200 rounded px-2 py-1 mt-1 shadow-2xs group hover:border-red-300">
-            <span class="truncate font-medium text-gray-800" title="${s.name}">${s.name}</span>
-            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-gray-400 hover:text-red-600 font-bold ml-1 px-1 rounded" title="Quitar de esta PC">×</button>
-          </li>
-        `).join('');
-
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-center border-b pb-1.5 mb-1">
-              <div class="flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-mp-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <span class="font-extrabold text-xs text-mp-blue tracking-wide">${pcKey}</span>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-full ${badgeColorClass}">${count}/4</span>
-            </div>
-            <ul class="space-y-0.5">${studentsHTML || '<div class="text-[11px] text-gray-300 italic pt-3 text-center">Disponible</div>'}</ul>
-          </div>
-          ${isHighlighted ? '<div class="text-[10px] text-blue-600 font-bold text-center mt-2 bg-blue-100/80 rounded py-0.5">+ Asignar aquí</div>' : ''}
-        `;
-        grid.appendChild(card);
-      });
+      return {
+        email: email,
+        name: displayName,
+        surname: surname,
+        rawName: student.name
+      };
     }
 
-    // Cargar los alumnos del grupo seleccionado mediante Apps Script API
+    // Cargar alumnos desde Google Apps Script
     async function loadStudents() {
       const groupEmail = document.getElementById('courseSelect').value;
       if (!groupEmail) return;
 
       const unassignedList = document.getElementById('unassignedList');
-      unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-mp-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Cargando miembros del grupo Google Workspace...</span>';
+      unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-mp-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Cargando miembros y ordenando por Apellido...</span>';
 
       try {
         const res = await fetch(`${API_URL}?action=getStudents&group=${encodeURIComponent(groupEmail)}`);
         const json = await res.json();
 
         if (json.status === 'success') {
-          allStudents = json.data;
-          
-          // Limpiar las asignaciones al cambiar de curso
+          // Parsear y Ordenar Alfabéticamente por APELLIDO
+          allStudents = json.data.map(parseStudent);
+          allStudents.sort((a, b) => a.surname.localeCompare(b.surname, 'es', { sensitivity: 'base' }));
+
+          // Resetear asignaciones
           pcList.forEach(pc => assignments[pc] = []);
-          selectedStudent = null;
           
           renderUnassigned();
           renderPCs();
@@ -250,11 +270,11 @@
           unassignedList.innerHTML = `<span class="text-red-600 text-xs font-semibold">Error: ${json.message}</span>`;
         }
       } catch (e) {
-        unassignedList.innerHTML = '<span class="text-red-600 text-xs font-semibold">No se pudo obtener el grupo. Verifica el despliegue del script.</span>';
+        unassignedList.innerHTML = '<span class="text-red-600 text-xs font-semibold">No se pudo obtener el grupo. Verifica la conexión.</span>';
       }
     }
 
-    // Renderizar lista de alumnos sin computadora asignada
+    // Renderizar resumen de alumnos pendientes
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
@@ -269,44 +289,201 @@
       }
 
       unassigned.forEach(student => {
-        const btn = document.createElement('button');
-        const isSelected = selectedStudent && selectedStudent.email === student.email;
-        btn.className = `text-xs px-3 py-1.5 rounded-lg border font-medium transition-all ${
-          isSelected 
-            ? 'bg-mp-blue text-white border-mp-blue shadow-md scale-105 ring-2 ring-blue-300' 
-            : 'bg-white text-gray-700 border-gray-300 hover:border-mp-blue hover:text-mp-blue'
-        }`;
-        btn.innerText = student.name;
-        btn.onclick = () => {
-          selectedStudent = isSelected ? null : student;
-          renderUnassigned();
-          renderPCs();
-        };
-        container.appendChild(btn);
+        const chip = document.createElement('span');
+        chip.className = 'text-[11px] px-2.5 py-1 rounded-md bg-white border border-gray-300 text-gray-700 font-medium shadow-2xs';
+        chip.innerText = student.name;
+        container.appendChild(chip);
       });
     }
 
-    // Asignar alumno seleccionado a una PC
-    function assignToPC(pcKey) {
-      if (!selectedStudent) return;
-      if (assignments[pcKey].length >= 4) {
-        alert("La computadora " + pcKey + " ya alcanzó el límite máximo de 4 alumnos.");
+    // Renderizar tarjeta de las 22 PCs
+    function renderPCs() {
+      const grid = document.getElementById('pcGrid');
+      grid.innerHTML = '';
+
+      pcList.forEach(pcKey => {
+        const list = assignments[pcKey] || [];
+        const count = list.length;
+        const isFull = count >= 4;
+        const isEmpty = count === 0;
+
+        let statusColorClass = 'border-gray-200 hover:border-mp-blue hover:shadow-md';
+        let badgeColorClass = 'bg-emerald-100 text-emerald-800';
+        
+        if (isFull) {
+          statusColorClass = 'border-red-300 bg-red-50/20';
+          badgeColorClass = 'bg-red-100 text-red-800 font-bold';
+        } else if (!isEmpty) {
+          statusColorClass = 'border-blue-300 bg-blue-50/20';
+          badgeColorClass = 'bg-blue-100 text-blue-800 font-bold';
+        }
+
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl border-2 transition-all bg-white shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer relative ${statusColorClass}`;
+        card.onclick = () => openPCModal(pcKey);
+
+        let studentsHTML = list.map(s => `
+          <li class="flex justify-between items-center text-[11px] bg-white border border-gray-200 rounded px-2 py-1 mt-1 shadow-2xs group hover:border-red-300">
+            <span class="truncate font-medium text-gray-800" title="${s.email}">${s.name}</span>
+            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-gray-400 hover:text-red-600 font-bold ml-1 px-1 rounded" title="Quitar de esta PC">×</button>
+          </li>
+        `).join('');
+
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-center border-b pb-1.5 mb-1">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-mp-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                <span class="font-extrabold text-xs text-mp-blue tracking-wide">${pcKey}</span>
+              </div>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-full ${badgeColorClass}">${count}/4</span>
+            </div>
+            <ul class="space-y-0.5">${studentsHTML || '<div class="text-[11px] text-gray-300 italic pt-3 text-center">Toca para asignar</div>'}</ul>
+          </div>
+          ${!isFull ? '<div class="text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">+ Asignar alumnos</div>' : ''}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ==========================================
+    // LÓGICA DE LA VENTANA FLOTANTE (MODAL)
+    // ==========================================
+
+    function openPCModal(pcKey) {
+      currentModalPC = pcKey;
+      modalSelectedEmails = [];
+      document.getElementById('modalSearchInput').value = '';
+
+      const currentCount = assignments[pcKey].length;
+      const maxSlotsLeft = 4 - currentCount;
+
+      document.getElementById('modalPcTitle').innerText = `Asignar alumnos a ${pcKey}`;
+      document.getElementById('modalPcSubtitle').innerText = maxSlotsLeft > 0 
+        ? `Vacantes disponibles: ${maxSlotsLeft} de 4`
+        : `PC Completa (4/4 alumnos asignados)`;
+
+      renderModalStudents();
+      document.getElementById('pcModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('pcModal').classList.add('hidden');
+      currentModalPC = null;
+      modalSelectedEmails = [];
+    }
+
+    function clearModalSearch() {
+      document.getElementById('modalSearchInput').value = '';
+      renderModalStudents();
+    }
+
+    function renderModalStudents() {
+      if (!currentModalPC) return;
+
+      const searchTerm = document.getElementById('modalSearchInput').value.toLowerCase().trim();
+      const assignedEmails = Object.values(assignments).flat().map(s => s.email);
+      const currentCount = assignments[currentModalPC].length;
+      const maxSlotsLeft = 4 - currentCount;
+
+      // Filtrar pendientes que no estén en ninguna PC
+      const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
+      
+      // Filtrar por término de búsqueda (Apellido, Nombre o Email)
+      const filtered = unassigned.filter(s => 
+        s.name.toLowerCase().includes(searchTerm) || 
+        s.surname.toLowerCase().includes(searchTerm) || 
+        s.email.toLowerCase().includes(searchTerm)
+      );
+
+      const listContainer = document.getElementById('modalStudentList');
+      listContainer.innerHTML = '';
+
+      if (maxSlotsLeft <= 0) {
+        listContainer.innerHTML = '<div class="p-4 text-center text-red-600 font-semibold text-xs bg-red-50 rounded-lg">Esta computadora ya tiene el cupo máximo de 4 alumnos. Quita alguno si necesitas reemplazarlo.</div>';
+        document.getElementById('modalConfirmBtn').disabled = true;
+        document.getElementById('modalConfirmBtn').classList.add('opacity-50');
         return;
       }
-      assignments[pcKey].push(selectedStudent);
-      selectedStudent = null;
+
+      document.getElementById('modalConfirmBtn').disabled = false;
+      document.getElementById('modalConfirmBtn').classList.remove('opacity-50');
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No se encontraron alumnos pendientes con ese criterio.</div>';
+        return;
+      }
+
+      filtered.forEach(student => {
+        const isChecked = modalSelectedEmails.includes(student.email);
+        
+        const row = document.createElement('label');
+        row.className = `flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-all ${
+          isChecked 
+            ? 'bg-blue-50 border-mp-blue text-mp-blue font-bold shadow-2xs' 
+            : 'bg-white border-gray-200 hover:bg-gray-50 text-gray-700'
+        }`;
+
+        row.innerHTML = `
+          <div class="flex items-center gap-3">
+            <input 
+              type="checkbox" 
+              class="w-4 h-4 text-mp-blue rounded border-gray-300 focus:ring-mp-blue"
+              ${isChecked ? 'checked' : ''}
+              onchange="toggleStudentSelection('${student.email}')"
+            />
+            <div>
+              <span class="text-xs block">${student.name}</span>
+              <span class="text-[10px] text-gray-400 font-normal block">${student.email}</span>
+            </div>
+          </div>
+          <span class="text-[10px] font-semibold text-gray-400 uppercase">${student.surname}</span>
+        `;
+        listContainer.appendChild(row);
+      });
+
+      document.getElementById('modalSelectionCount').innerText = `${modalSelectedEmails.length} de ${maxSlotsLeft} vacantes seleccionadas`;
+    }
+
+    function toggleStudentSelection(email) {
+      const currentCount = assignments[currentModalPC].length;
+      const maxSlotsLeft = 4 - currentCount;
+
+      const index = modalSelectedEmails.indexOf(email);
+      if (index > -1) {
+        modalSelectedEmails.splice(index, 1);
+      } else {
+        if (modalSelectedEmails.length >= maxSlotsLeft) {
+          alert(`Solo puedes seleccionar hasta ${maxSlotsLeft} alumnos para esta PC.`);
+          renderModalStudents();
+          return;
+        }
+        modalSelectedEmails.push(email);
+      }
+      renderModalStudents();
+    }
+
+    function confirmModalAssignment() {
+      if (!currentModalPC || modalSelectedEmails.length === 0) {
+        closeModal();
+        return;
+      }
+
+      const studentsToAdd = allStudents.filter(s => modalSelectedEmails.includes(s.email));
+      assignments[currentModalPC].push(...studentsToAdd);
+
+      closeModal();
       renderUnassigned();
       renderPCs();
     }
 
-    // Desasignar alumno de una PC
     function unassignStudent(pcKey, email) {
       assignments[pcKey] = assignments[pcKey].filter(s => s.email !== email);
       renderUnassigned();
       renderPCs();
     }
 
-    // Guardar la distribución en la planilla de Google Sheets
+    // Guardar en Google Sheets
     async function saveSnapshot() {
       const courseSelect = document.getElementById('courseSelect');
       const courseText = courseSelect.options[courseSelect.selectedIndex].text;
@@ -360,7 +537,7 @@
       }
     }
 
-    // Renderizado inicial
+    // Render inicial
     renderPCs();
   </script>
 </body>
