@@ -11,52 +11,37 @@
       --mp-blue-light: #1E4287;
       --mp-red: #A71D2A;
       --mp-red-hover: #8B1822;
-      --mp-sky: #00B0E8;
       --mp-bg: #F4F6F9;
     }
     body {
       background-color: var(--mp-bg);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     .bg-mp-blue { background-color: var(--mp-blue); }
     .bg-mp-red { background-color: var(--mp-red); }
-    .bg-mp-sky { background-color: var(--mp-sky); }
-    .border-mp-blue { border-color: var(--mp-blue); }
-    .border-mp-red { border-color: var(--mp-red); }
     .text-mp-blue { color: var(--mp-blue); }
-    .text-mp-red { color: var(--mp-red); }
     .hover\:bg-mp-red:hover { background-color: var(--mp-red-hover); }
-    .hover\:bg-mp-blue-light:hover { background-color: var(--mp-blue-light); }
   </style>
 </head>
 <body class="min-h-screen pb-10">
 
-  <!-- CABECERA INSTITUCIONAL -->
-  <header class="bg-mp-blue text-white shadow-md border-b-4 border-mp-red">
+  <header class="bg-mp-blue text-white shadow-md border-b-4 border-red-700">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
       
-      <!-- LOGO Y TÍTULO DEL COLEGIO -->
-      <div class="flex items-center gap-4">
-        <div class="bg-white p-1.5 rounded-lg shadow-sm flex items-center justify-center min-w-[50px] h-[50px]">
-          <img 
-            src="logo.png" 
-            alt="Colegio Mater Purissima" 
-            class="h-10 w-auto object-contain"
-          />
+      <div class="flex items-center gap-3">
+        <div class="bg-white p-1 rounded-lg shadow-sm flex items-center justify-center min-w-[45px] h-[45px]">
+          <img src="logo.png" alt="Logo" class="h-9 w-auto object-contain"/>
         </div>
         <div>
-          <h1 class="text-lg md:text-xl font-bold tracking-wide uppercase">Colegio Mater Purissima</h1>
-          <p class="text-xs text-blue-200 font-medium">Control y Mapa de Ocupación - Aula de Informática</p>
+          <h1 class="text-base md:text-lg font-bold uppercase tracking-wide">Colegio Mater Purissima</h1>
+          <p class="text-xs text-blue-200">Control y Mapa de Ocupación - Aula de Informática</p>
         </div>
       </div>
 
-      <!-- CONTROLES PRINCIPALES -->
-      <div class="flex flex-wrap gap-3 items-center bg-white/10 p-2.5 rounded-xl backdrop-blur-sm border border-white/10 w-full md:w-auto justify-end">
-        
-        <!-- SELECCIÓN DE CURSO -->
+      <div class="flex flex-wrap gap-3 items-center bg-white/10 p-2 rounded-xl border border-white/10">
         <div>
-          <label for="courseSelect" class="block text-[10px] text-blue-100 font-bold uppercase tracking-wider mb-0.5">Curso</label>
-          <select id="courseSelect" onchange="loadStudents()" class="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <label for="courseSelect" class="block text-[10px] text-blue-100 font-bold uppercase mb-0.5">Curso</label>
+          <select id="courseSelect" onchange="loadStudents()" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
             <option value="">-- Seleccionar Curso --</option>
             <optgroup label="Nivel Primario">
               <option value="primero_primaria@materpurissima.edu.ar">1.º Grado Primaria</option>
@@ -77,10 +62,9 @@
           </select>
         </div>
 
-        <!-- SELECCIÓN DE MÓDULO -->
         <div>
-          <label for="moduleSelect" class="block text-[10px] text-blue-100 font-bold uppercase tracking-wider mb-0.5">Módulo / Horario</label>
-          <select id="moduleSelect" class="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-white text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <label for="moduleSelect" class="block text-[10px] text-blue-100 font-bold uppercase mb-0.5">Módulo / Horario</label>
+          <select id="moduleSelect" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
             <option value="07:20 AM">07:20 AM</option>
             <option value="08:00 AM">08:00 AM</option>
             <option value="08:50 AM">08:50 AM</option>
@@ -99,40 +83,35 @@
           </select>
         </div>
 
-        <!-- BOTÓN DE GUARDAR -->
         <div class="pt-3">
-          <button id="saveBtn" onclick="saveSnapshot()" class="bg-mp-red hover:bg-mp-red-hover text-white font-bold text-xs px-4 py-2 rounded-md shadow flex items-center gap-1.5 transition-all">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+          <button id="saveBtn" onclick="saveSnapshot()" class="bg-mp-red hover:bg-mp-red-hover text-white font-bold text-xs px-3 py-1.5 rounded shadow flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
             <span>Guardar Registro</span>
           </button>
         </div>
-
       </div>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto px-4 mt-6 space-y-5">
+  <main class="max-w-7xl mx-auto px-4 mt-5 space-y-4">
 
-    <!-- RESUMEN DE PENDIENTES -->
-    <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+    <section class="bg-white rounded-xl shadow-sm border border-gray-200 p-3.5">
       <div class="flex justify-between items-center mb-2">
         <h2 class="text-xs font-bold text-mp-blue uppercase tracking-wider flex items-center gap-2">
           <span>Alumnos Pendientes de Asignar</span>
-          <span id="unassignedCountBadge" class="bg-blue-100 text-mp-blue text-[11px] px-2 py-0.5 rounded-full font-extrabold">0</span>
+          <span id="unassignedCountBadge" class="bg-blue-100 text-mp-blue text-[11px] px-2 py-0.5 rounded-full font-bold">0</span>
         </h2>
-        <span class="text-[11px] text-gray-500 italic">Haz clic en cualquier equipo (PC) para buscar y asignar alumnos</span>
+        <span class="text-[11px] text-gray-400 italic">Ordenados alfabéticamente por Apellido</span>
       </div>
 
-      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[42px] p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
-        <span class="text-gray-400 text-xs italic">Seleccioná un curso para cargar la lista ordenada por apellido...</span>
+      <div id="unassignedList" class="flex flex-wrap gap-1.5 min-h-[38px] p-2 bg-gray-50 rounded-lg border border-dashed border-gray-300 items-center">
+        <span class="text-gray-400 text-xs italic">Selecciona un curso para cargar los alumnos...</span>
       </div>
     </section>
 
-    <!-- PANEL DE COMPUTADORAS (22 PCs) -->
     <section>
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Distribución del Aula (22 Equipos - Máx. 4 alumnos por PC)</h2>
+      <div class="flex justify-between items-center mb-2.5">
+        <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Distribución del Aula (22 Equipos - Máx. 4 por PC)</h2>
         <div class="flex gap-3 text-[11px] font-semibold text-gray-500">
           <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Libre</span>
           <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> En uso</span>
@@ -141,51 +120,41 @@
       </div>
 
       <div id="pcGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        <!-- Se genera dinámicamente -->
-      </div>
+        </div>
     </section>
 
   </main>
 
-  <!-- VENTANA FLOTANTE / MODAL DE ASIGNACIÓN MULTIPLE -->
-  <div id="pcModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+  <div id="pcModal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]">
       
-      <!-- Encabezado Modal -->
-      <div class="bg-mp-blue text-white px-5 py-3.5 flex justify-between items-center">
+      <div class="bg-mp-blue text-white px-4 py-3 flex justify-between items-center">
         <div>
-          <h3 id="modalPcTitle" class="font-bold text-sm md:text-base">Asignar alumnos a PC</h3>
-          <p id="modalPcSubtitle" class="text-xs text-blue-200">Vacantes disponibles: 4</p>
+          <h3 id="modalPcTitle" class="font-bold text-sm">Asignar alumnos</h3>
+          <p id="modalPcSubtitle" class="text-[11px] text-blue-200">Selecciona entre 1 y 4 alumnos</p>
         </div>
-        <button onclick="closeModal()" class="text-white/80 hover:text-white text-2xl font-bold leading-none">&times;</button>
+        <button onclick="closeModal()" class="text-white hover:text-gray-300 text-xl font-bold leading-none">&times;</button>
       </div>
 
-      <!-- Buscador por Apellido / Nombre / Email -->
-      <div class="p-3 border-b bg-gray-50 flex gap-2 items-center">
-        <div class="relative flex-1">
-          <input 
-            type="text" 
-            id="modalSearchInput" 
-            oninput="renderModalStudents()" 
-            placeholder="🔍 Buscar por apellido, nombre o correo..." 
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-mp-blue focus:outline-none"
-          >
+      <div class="p-3 border-b bg-gray-50">
+        <input 
+          type="text" 
+          id="modalSearchInput" 
+          oninput="renderModalStudents()" 
+          placeholder="🔍 Buscar por apellido o nombre..." 
+          class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-mp-blue focus:outline-none"
+        >
+      </div>
+
+      <div id="modalStudentList" class="p-2 overflow-y-auto divide-y divide-gray-100 flex-1 max-h-[280px]">
         </div>
-        <button onclick="clearModalSearch()" class="text-xs text-gray-500 hover:text-red-600 px-2 font-medium">Limpiar</button>
-      </div>
 
-      <!-- Lista de Alumnos Seleccionables -->
-      <div id="modalStudentList" class="p-4 overflow-y-auto space-y-1.5 flex-1 max-h-[320px]">
-        <!-- Render dinámico con checkboxes -->
-      </div>
-
-      <!-- Pie del Modal -->
-      <div class="p-3.5 border-t bg-gray-50 flex justify-between items-center">
+      <div class="p-3 border-t bg-gray-50 flex justify-between items-center">
         <span id="modalSelectionCount" class="text-xs font-bold text-mp-blue">0 seleccionados</span>
         <div class="flex gap-2">
-          <button onclick="closeModal()" class="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-200 rounded-lg">Cancelar</button>
-          <button id="modalConfirmBtn" onclick="confirmModalAssignment()" class="px-4 py-1.5 text-xs font-bold bg-mp-blue text-white rounded-lg hover:bg-mp-blue-light transition-all shadow">
-            Asignar a la PC
+          <button onclick="closeModal()" class="px-3 py-1 text-xs text-gray-600 hover:bg-gray-200 rounded">Cancelar</button>
+          <button id="modalConfirmBtn" onclick="confirmModalAssignment()" class="px-3 py-1 text-xs font-bold bg-mp-blue text-white rounded hover:bg-blue-900 shadow">
+            Asignar a PC
           </button>
         </div>
       </div>
@@ -193,7 +162,6 @@
     </div>
   </div>
 
-  <!-- LÓGICA JAVASCRIPT -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxcFr-SQhKpEbbaGG8FMEAMe5ID8b7gh7RVgY8ZCNTs8lnB-VCScFF9YSVsJ0wkbZBqkQ/exec"; 
 
@@ -210,16 +178,14 @@
     let currentModalPC = null;
     let modalSelectedEmails = [];
 
-    // Inicializar PCs
     pcList.forEach(pc => assignments[pc] = []);
 
-    // Procesar y formatear Nombre / Apellido
+    // Formatear Apellido y Nombre
     function parseStudent(student) {
       const email = student.email || '';
       const username = email.split('@')[0] || '';
-      
-      // Patrón: 1 letra inicial + Apellido + 3 dígitos DNI (ej: jtavano968)
       const match = username.match(/^([a-zA-Z])([a-zA-Z]+?)(\d{3})$/);
+      
       let surname = '';
       let initial = '';
       let displayName = '';
@@ -230,51 +196,46 @@
         surname = rawSurname.charAt(0).toUpperCase() + rawSurname.slice(1).toLowerCase();
         displayName = `${surname}, ${initial}.`;
       } else {
-        // Formato de reserva si varía la estructura
-        const rawName = student.name || username;
-        surname = rawName;
-        displayName = rawName;
+        displayName = student.name || username;
+        surname = displayName.split(' ')[0] || username;
       }
 
       return {
         email: email,
         name: displayName,
-        surname: surname,
-        rawName: student.name
+        surname: surname
       };
     }
 
-    // Cargar alumnos desde Google Apps Script
+    // Cargar alumnos desde Apps Script
     async function loadStudents() {
       const groupEmail = document.getElementById('courseSelect').value;
       if (!groupEmail) return;
 
       const unassignedList = document.getElementById('unassignedList');
-      unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse flex items-center gap-2"><svg class="animate-spin h-4 w-4 text-mp-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Cargando miembros y ordenando por Apellido...</span>';
+      unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse">Cargando alumnos...</span>';
 
       try {
         const res = await fetch(`${API_URL}?action=getStudents&group=${encodeURIComponent(groupEmail)}`);
         const json = await res.json();
 
         if (json.status === 'success') {
-          // Parsear y Ordenar Alfabéticamente por APELLIDO
+          // Parsear y ORDENAR ALFABÉTICAMENTE POR APELLIDO
           allStudents = json.data.map(parseStudent);
           allStudents.sort((a, b) => a.surname.localeCompare(b.surname, 'es', { sensitivity: 'base' }));
 
-          // Resetear asignaciones
           pcList.forEach(pc => assignments[pc] = []);
-          
           renderUnassigned();
           renderPCs();
         } else {
           unassignedList.innerHTML = `<span class="text-red-600 text-xs font-semibold">Error: ${json.message}</span>`;
         }
       } catch (e) {
-        unassignedList.innerHTML = '<span class="text-red-600 text-xs font-semibold">No se pudo obtener el grupo. Verifica la conexión.</span>';
+        unassignedList.innerHTML = '<span class="text-red-600 text-xs font-semibold">Error de conexión.</span>';
       }
     }
 
-    // Renderizar resumen de alumnos pendientes
+    // Mostrar lista de pendientes ordenados por apellido
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
@@ -284,19 +245,19 @@
       container.innerHTML = '';
 
       if (unassigned.length === 0 && allStudents.length > 0) {
-        container.innerHTML = '<span class="text-emerald-700 text-xs font-bold">¡Todos los alumnos han sido asignados a las computadoras!</span>';
+        container.innerHTML = '<span class="text-emerald-700 text-xs font-bold">¡Todos los alumnos están asignados!</span>';
         return;
       }
 
       unassigned.forEach(student => {
         const chip = document.createElement('span');
-        chip.className = 'text-[11px] px-2.5 py-1 rounded-md bg-white border border-gray-300 text-gray-700 font-medium shadow-2xs';
+        chip.className = 'text-[11px] px-2 py-0.5 rounded bg-white border border-gray-300 text-gray-700 font-medium shadow-2xs';
         chip.innerText = student.name;
         container.appendChild(chip);
       });
     }
 
-    // Renderizar tarjeta de las 22 PCs
+    // Renderizar tarjetas de PCs
     function renderPCs() {
       const grid = document.getElementById('pcGrid');
       grid.innerHTML = '';
@@ -305,51 +266,47 @@
         const list = assignments[pcKey] || [];
         const count = list.length;
         const isFull = count >= 4;
-        const isEmpty = count === 0;
 
-        let statusColorClass = 'border-gray-200 hover:border-mp-blue hover:shadow-md';
-        let badgeColorClass = 'bg-emerald-100 text-emerald-800';
-        
+        let borderClass = 'border-gray-200';
+        let badgeClass = 'bg-emerald-100 text-emerald-800';
+
         if (isFull) {
-          statusColorClass = 'border-red-300 bg-red-50/20';
-          badgeColorClass = 'bg-red-100 text-red-800 font-bold';
-        } else if (!isEmpty) {
-          statusColorClass = 'border-blue-300 bg-blue-50/20';
-          badgeColorClass = 'bg-blue-100 text-blue-800 font-bold';
+          borderClass = 'border-red-300 bg-red-50/20';
+          badgeClass = 'bg-red-100 text-red-800 font-bold';
+        } else if (count > 0) {
+          borderClass = 'border-blue-300 bg-blue-50/20';
+          badgeClass = 'bg-blue-100 text-blue-800 font-bold';
         }
 
         const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border-2 transition-all bg-white shadow-sm flex flex-col justify-between min-h-[140px] cursor-pointer relative ${statusColorClass}`;
-        card.onclick = () => openPCModal(pcKey);
+        card.className = `p-2.5 rounded-xl border-2 bg-white shadow-xs flex flex-col justify-between min-h-[135px] ${borderClass}`;
 
         let studentsHTML = list.map(s => `
-          <li class="flex justify-between items-center text-[11px] bg-white border border-gray-200 rounded px-2 py-1 mt-1 shadow-2xs group hover:border-red-300">
-            <span class="truncate font-medium text-gray-800" title="${s.email}">${s.name}</span>
-            <button onclick="event.stopPropagation(); unassignStudent('${pcKey}', '${s.email}')" class="text-gray-400 hover:text-red-600 font-bold ml-1 px-1 rounded" title="Quitar de esta PC">×</button>
+          <li class="flex justify-between items-center text-[11px] bg-white border rounded px-1.5 py-0.5 mt-1 shadow-2xs">
+            <span class="truncate font-medium text-gray-800">${s.name}</span>
+            <button onclick="unassignStudent('${pcKey}', '${s.email}')" class="text-gray-400 hover:text-red-600 font-bold ml-1">×</button>
           </li>
         `).join('');
 
         card.innerHTML = `
           <div>
-            <div class="flex justify-between items-center border-b pb-1.5 mb-1">
-              <div class="flex items-center gap-1.5">
-                <svg class="w-4 h-4 text-mp-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                <span class="font-extrabold text-xs text-mp-blue tracking-wide">${pcKey}</span>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded-full ${badgeColorClass}">${count}/4</span>
+            <div class="flex justify-between items-center border-b pb-1 mb-1">
+              <span class="font-extrabold text-xs text-mp-blue">${pcKey}</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full ${badgeClass}">${count}/4</span>
             </div>
-            <ul class="space-y-0.5">${studentsHTML || '<div class="text-[11px] text-gray-300 italic pt-3 text-center">Toca para asignar</div>'}</ul>
+            <ul class="space-y-0.5">${studentsHTML || '<div class="text-[10px] text-gray-300 italic pt-2 text-center">Vacío</div>'}</ul>
           </div>
-          ${!isFull ? '<div class="text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">+ Asignar alumnos</div>' : ''}
+          ${!isFull ? `
+            <button onclick="openPCModal('${pcKey}')" class="w-full text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">
+              + Asignar alumnos
+            </button>
+          ` : ''}
         `;
         grid.appendChild(card);
       });
     }
 
-    // ==========================================
-    // LÓGICA DE LA VENTANA FLOTANTE (MODAL)
-    // ==========================================
-
+    // Modal
     function openPCModal(pcKey) {
       currentModalPC = pcKey;
       modalSelectedEmails = [];
@@ -359,9 +316,7 @@
       const maxSlotsLeft = 4 - currentCount;
 
       document.getElementById('modalPcTitle').innerText = `Asignar alumnos a ${pcKey}`;
-      document.getElementById('modalPcSubtitle').innerText = maxSlotsLeft > 0 
-        ? `Vacantes disponibles: ${maxSlotsLeft} de 4`
-        : `PC Completa (4/4 alumnos asignados)`;
+      document.getElementById('modalPcSubtitle').innerText = `Vacantes disponibles: ${maxSlotsLeft} de 4`;
 
       renderModalStudents();
       document.getElementById('pcModal').classList.remove('hidden');
@@ -373,11 +328,6 @@
       modalSelectedEmails = [];
     }
 
-    function clearModalSearch() {
-      document.getElementById('modalSearchInput').value = '';
-      renderModalStudents();
-    }
-
     function renderModalStudents() {
       if (!currentModalPC) return;
 
@@ -386,31 +336,17 @@
       const currentCount = assignments[currentModalPC].length;
       const maxSlotsLeft = 4 - currentCount;
 
-      // Filtrar pendientes que no estén en ninguna PC
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
-      
-      // Filtrar por término de búsqueda (Apellido, Nombre o Email)
       const filtered = unassigned.filter(s => 
         s.name.toLowerCase().includes(searchTerm) || 
-        s.surname.toLowerCase().includes(searchTerm) || 
-        s.email.toLowerCase().includes(searchTerm)
+        s.surname.toLowerCase().includes(searchTerm)
       );
 
       const listContainer = document.getElementById('modalStudentList');
       listContainer.innerHTML = '';
 
-      if (maxSlotsLeft <= 0) {
-        listContainer.innerHTML = '<div class="p-4 text-center text-red-600 font-semibold text-xs bg-red-50 rounded-lg">Esta computadora ya tiene el cupo máximo de 4 alumnos. Quita alguno si necesitas reemplazarlo.</div>';
-        document.getElementById('modalConfirmBtn').disabled = true;
-        document.getElementById('modalConfirmBtn').classList.add('opacity-50');
-        return;
-      }
-
-      document.getElementById('modalConfirmBtn').disabled = false;
-      document.getElementById('modalConfirmBtn').classList.remove('opacity-50');
-
       if (filtered.length === 0) {
-        listContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No se encontraron alumnos pendientes con ese criterio.</div>';
+        listContainer.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs italic">No hay alumnos disponibles con ese nombre.</div>';
         return;
       }
 
@@ -418,26 +354,19 @@
         const isChecked = modalSelectedEmails.includes(student.email);
         
         const row = document.createElement('label');
-        row.className = `flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition-all ${
-          isChecked 
-            ? 'bg-blue-50 border-mp-blue text-mp-blue font-bold shadow-2xs' 
-            : 'bg-white border-gray-200 hover:bg-gray-50 text-gray-700'
-        }`;
+        row.className = `flex items-center justify-between p-2 rounded cursor-pointer text-xs hover:bg-gray-50 ${isChecked ? 'bg-blue-50 font-bold text-mp-blue' : ''}`;
 
         row.innerHTML = `
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
             <input 
               type="checkbox" 
-              class="w-4 h-4 text-mp-blue rounded border-gray-300 focus:ring-mp-blue"
+              class="w-3.5 h-3.5 rounded border-gray-300"
               ${isChecked ? 'checked' : ''}
               onchange="toggleStudentSelection('${student.email}')"
             />
-            <div>
-              <span class="text-xs block">${student.name}</span>
-              <span class="text-[10px] text-gray-400 font-normal block">${student.email}</span>
-            </div>
+            <span>${student.name}</span>
           </div>
-          <span class="text-[10px] font-semibold text-gray-400 uppercase">${student.surname}</span>
+          <span class="text-[10px] text-gray-400 font-normal">${student.email.split('@')[0]}</span>
         `;
         listContainer.appendChild(row);
       });
@@ -483,7 +412,7 @@
       renderPCs();
     }
 
-    // Guardar en Google Sheets
+    // Guardar registro
     async function saveSnapshot() {
       const courseSelect = document.getElementById('courseSelect');
       const courseText = courseSelect.options[courseSelect.selectedIndex].text;
@@ -491,7 +420,7 @@
       const today = new Date().toISOString().split('T')[0];
 
       if (!courseSelect.value) {
-        alert("Por favor selecciona un curso antes de guardar.");
+        alert("Selecciona un curso antes de guardar.");
         return;
       }
 
@@ -500,14 +429,13 @@
         .map(pc => ({ pc: pc, students: assignments[pc] }));
 
       if (activeAssignments.length === 0) {
-        alert("No hay alumnos asignados a ninguna computadora.");
+        alert("No hay alumnos asignados.");
         return;
       }
 
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.disabled = true;
-      saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      saveBtn.innerHTML = `<span>Guardando...</span>`;
+      saveBtn.innerText = "Guardando...";
 
       const payload = {
         action: 'saveSession',
@@ -524,20 +452,15 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload)
         });
-        alert("¡Registro de distribución guardado con éxito en la planilla de cálculo!");
+        alert("¡Registro guardado con éxito!");
       } catch (e) {
-        alert("Ocurrió un problema al enviar la información a Google Sheets.");
+        alert("Error al conectar con Google Sheets.");
       } finally {
         saveBtn.disabled = false;
-        saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        saveBtn.innerHTML = `
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-          <span>Guardar Registro</span>
-        `;
+        saveBtn.innerText = "Guardar Registro";
       }
     }
 
-    // Render inicial
     renderPCs();
   </script>
 </body>
