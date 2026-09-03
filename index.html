@@ -30,7 +30,7 @@
       
       <div class="flex items-center gap-3">
         <div class="bg-white p-1 rounded-lg shadow-sm flex items-center justify-center min-w-[45px] h-[45px]">
-          <img src="logo.png" alt="Logo" class="h-9 w-auto object-contain"/>
+          <img src="Logo MP - png (1).png" alt="Logo Mater Purissima" class="h-9 w-auto object-contain"/>
         </div>
         <div>
           <h1 class="text-base md:text-lg font-bold uppercase tracking-wide">Colegio Mater Purissima</h1>
@@ -125,36 +125,43 @@
 
   </main>
 
-  <div id="pcModal" class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]">
+  <div id="pcModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col border border-gray-200" style="max-height: 85vh;">
       
       <div class="bg-mp-blue text-white px-4 py-3 flex justify-between items-center">
         <div>
           <h3 id="modalPcTitle" class="font-bold text-sm">Asignar alumnos</h3>
-          <p id="modalPcSubtitle" class="text-[11px] text-blue-200">Selecciona entre 1 y 4 alumnos</p>
+          <p id="modalPcSubtitle" class="text-[11px] text-blue-200">Vacantes disponibles</p>
         </div>
-        <button onclick="closeModal()" class="text-white hover:text-gray-300 text-xl font-bold leading-none">&times;</button>
+        <button onclick="closeModal()" class="w-7 h-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-colors" title="Salir">
+          ✕
+        </button>
       </div>
 
-      <div class="p-3 border-b bg-gray-50">
-        <input 
-          type="text" 
-          id="modalSearchInput" 
-          oninput="renderModalStudents()" 
-          placeholder="🔍 Buscar por apellido o nombre..." 
-          class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-mp-blue focus:outline-none"
-        >
+      <div class="p-2.5 bg-gray-50 border-b border-gray-200">
+        <div class="relative">
+          <input 
+            type="text" 
+            id="modalSearchInput" 
+            oninput="renderModalStudents()" 
+            placeholder="🔍 Buscar apellido o nombre..." 
+            class="w-full border border-gray-300 rounded-lg pl-3 pr-7 py-1.5 text-xs focus:ring-2 focus:ring-mp-blue focus:outline-none bg-white"
+          >
+          <button onclick="clearModalSearch()" class="absolute right-2 top-1.5 text-gray-400 hover:text-gray-600 text-xs">✕</button>
+        </div>
       </div>
 
-      <div id="modalStudentList" class="p-2 overflow-y-auto divide-y divide-gray-100 flex-1 max-h-[280px]">
+      <div id="modalStudentList" class="p-2 overflow-y-auto space-y-1 flex-1" style="max-height: 260px; min-height: 100px;">
         </div>
 
-      <div class="p-3 border-t bg-gray-50 flex justify-between items-center">
-        <span id="modalSelectionCount" class="text-xs font-bold text-mp-blue">0 seleccionados</span>
+      <div class="p-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+        <span id="modalSelectionCount" class="text-[11px] font-bold text-mp-blue">0 seleccionados</span>
         <div class="flex gap-2">
-          <button onclick="closeModal()" class="px-3 py-1 text-xs text-gray-600 hover:bg-gray-200 rounded">Cancelar</button>
-          <button id="modalConfirmBtn" onclick="confirmModalAssignment()" class="px-3 py-1 text-xs font-bold bg-mp-blue text-white rounded hover:bg-blue-900 shadow">
-            Asignar a PC
+          <button onclick="closeModal()" class="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-200 rounded-lg transition-colors">
+            Salir
+          </button>
+          <button id="modalConfirmBtn" onclick="confirmModalAssignment()" class="px-3.5 py-1.5 text-xs font-bold bg-mp-blue text-white rounded-lg hover:bg-blue-900 transition-colors shadow-sm">
+            Asignar
           </button>
         </div>
       </div>
@@ -180,7 +187,6 @@
 
     pcList.forEach(pc => assignments[pc] = []);
 
-    // Formatear Apellido y Nombre
     function parseStudent(student) {
       const email = student.email || '';
       const username = email.split('@')[0] || '';
@@ -207,7 +213,6 @@
       };
     }
 
-    // Cargar alumnos desde Apps Script
     async function loadStudents() {
       const groupEmail = document.getElementById('courseSelect').value;
       if (!groupEmail) return;
@@ -220,7 +225,6 @@
         const json = await res.json();
 
         if (json.status === 'success') {
-          // Parsear y ORDENAR ALFABÉTICAMENTE POR APELLIDO
           allStudents = json.data.map(parseStudent);
           allStudents.sort((a, b) => a.surname.localeCompare(b.surname, 'es', { sensitivity: 'base' }));
 
@@ -235,7 +239,6 @@
       }
     }
 
-    // Mostrar lista de pendientes ordenados por apellido
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
@@ -257,7 +260,6 @@
       });
     }
 
-    // Renderizar tarjetas de PCs
     function renderPCs() {
       const grid = document.getElementById('pcGrid');
       grid.innerHTML = '';
@@ -306,7 +308,7 @@
       });
     }
 
-    // Modal
+    // LÓGICA DE LA VENTANA FLOTANTE
     function openPCModal(pcKey) {
       currentModalPC = pcKey;
       modalSelectedEmails = [];
@@ -315,7 +317,7 @@
       const currentCount = assignments[pcKey].length;
       const maxSlotsLeft = 4 - currentCount;
 
-      document.getElementById('modalPcTitle').innerText = `Asignar alumnos a ${pcKey}`;
+      document.getElementById('modalPcTitle').innerText = `Asignar a ${pcKey}`;
       document.getElementById('modalPcSubtitle').innerText = `Vacantes disponibles: ${maxSlotsLeft} de 4`;
 
       renderModalStudents();
@@ -326,6 +328,11 @@
       document.getElementById('pcModal').classList.add('hidden');
       currentModalPC = null;
       modalSelectedEmails = [];
+    }
+
+    function clearModalSearch() {
+      document.getElementById('modalSearchInput').value = '';
+      renderModalStudents();
     }
 
     function renderModalStudents() {
@@ -339,14 +346,15 @@
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
       const filtered = unassigned.filter(s => 
         s.name.toLowerCase().includes(searchTerm) || 
-        s.surname.toLowerCase().includes(searchTerm)
+        s.surname.toLowerCase().includes(searchTerm) ||
+        s.email.toLowerCase().includes(searchTerm)
       );
 
       const listContainer = document.getElementById('modalStudentList');
       listContainer.innerHTML = '';
 
       if (filtered.length === 0) {
-        listContainer.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs italic">No hay alumnos disponibles con ese nombre.</div>';
+        listContainer.innerHTML = '<div class="p-3 text-center text-gray-400 text-xs italic">No hay alumnos coincidentes.</div>';
         return;
       }
 
@@ -354,19 +362,19 @@
         const isChecked = modalSelectedEmails.includes(student.email);
         
         const row = document.createElement('label');
-        row.className = `flex items-center justify-between p-2 rounded cursor-pointer text-xs hover:bg-gray-50 ${isChecked ? 'bg-blue-50 font-bold text-mp-blue' : ''}`;
+        row.className = `flex items-center justify-between p-1.5 rounded cursor-pointer text-xs transition-colors hover:bg-gray-100 ${isChecked ? 'bg-blue-50 font-bold text-mp-blue border border-blue-200' : 'border border-transparent'}`;
 
         row.innerHTML = `
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 truncate">
             <input 
               type="checkbox" 
-              class="w-3.5 h-3.5 rounded border-gray-300"
+              class="w-3.5 h-3.5 rounded border-gray-300 focus:ring-mp-blue"
               ${isChecked ? 'checked' : ''}
               onchange="toggleStudentSelection('${student.email}')"
             />
-            <span>${student.name}</span>
+            <span class="truncate">${student.name}</span>
           </div>
-          <span class="text-[10px] text-gray-400 font-normal">${student.email.split('@')[0]}</span>
+          <span class="text-[10px] text-gray-400 font-normal ml-2">${student.email.split('@')[0]}</span>
         `;
         listContainer.appendChild(row);
       });
@@ -383,7 +391,7 @@
         modalSelectedEmails.splice(index, 1);
       } else {
         if (modalSelectedEmails.length >= maxSlotsLeft) {
-          alert(`Solo puedes seleccionar hasta ${maxSlotsLeft} alumnos para esta PC.`);
+          alert(`Esta PC solo tiene ${maxSlotsLeft} vacante(s) disponible(s).`);
           renderModalStudents();
           return;
         }
@@ -412,7 +420,6 @@
       renderPCs();
     }
 
-    // Guardar registro
     async function saveSnapshot() {
       const courseSelect = document.getElementById('courseSelect');
       const courseText = courseSelect.options[courseSelect.selectedIndex].text;
