@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Control de Aula de Informática - Colegio Mater Purissima</title>
+  
+  <!-- ÍCONO DE LA PESTAÑA -->
   <link rel="icon" type="image/png" href="Logomater.png">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <style>
     :root {
@@ -36,14 +39,17 @@
         </div>
         <div>
           <h1 class="text-base md:text-lg font-bold uppercase tracking-wide">Colegio Mater Purissima</h1>
-          <p class="text-xs text-blue-200">Control y Mapa de Ocupación - Aula de Informática</p>
+          <p class="text-xs text-blue-200 flex items-center gap-2">
+            <span>Control y Mapa de Ocupación - Aula de Informática</span>
+            <span id="autoSaveBadge" class="hidden text-[10px] bg-emerald-500 text-white font-bold px-1.5 py-0.5 rounded shadow-2xs">Borrador Autoguardado</span>
+          </p>
         </div>
       </div>
 
       <div class="flex flex-wrap gap-3 items-center bg-white/10 p-2 rounded-xl border border-white/10">
         <div>
           <label for="courseSelect" class="block text-[10px] text-blue-100 font-bold uppercase mb-0.5">Curso</label>
-          <select id="courseSelect" onchange="loadStudents()" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
+          <select id="courseSelect" onchange="loadStudents(true)" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
             <option value="">-- Seleccionar Curso --</option>
             <optgroup label="Nivel Primario">
               <option value="primero_primaria@materpurissima.edu.ar">1.º Grado Primaria</option>
@@ -66,7 +72,7 @@
 
         <div>
           <label for="moduleSelect" class="block text-[10px] text-blue-100 font-bold uppercase mb-0.5">Módulo / Horario</label>
-          <select id="moduleSelect" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
+          <select id="moduleSelect" onchange="saveLocalDraft()" class="border rounded px-2 py-1 text-xs bg-white text-gray-800 font-semibold focus:outline-none">
             <option value="07:20 AM">07:20 AM</option>
             <option value="08:00 AM">08:00 AM</option>
             <option value="08:50 AM">08:50 AM</option>
@@ -194,11 +200,70 @@
 
     let allStudents = [];
     let assignments = {}; 
-    let selectedTopStudents = []; // Alumnos seleccionados haciendo clic directo en la lista superior
+    let selectedTopStudents = [];
     let currentModalPC = null;
     let modalSelectedEmails = [];
 
     pcList.forEach(pc => assignments[pc] = []);
+
+    // FUNCIONES DE AUTOGUARDADO LOCAL (localStorage)
+    function saveLocalDraft() {
+      const course = document.getElementById('courseSelect').value;
+      const module = document.getElementById('moduleSelect').value;
+      
+      if (!course) return;
+
+      const draft = {
+        course: course,
+        module: module,
+        allStudents: allStudents,
+        assignments: assignments
+      };
+
+      localStorage.setItem('aula_informatica_draft', JSON.stringify(draft));
+      
+      // Mostrar insignia visual de autoguardado
+      const badge = document.getElementById('autoSaveBadge');
+      if (badge) {
+        badge.classList.remove('hidden');
+      }
+    }
+
+    function restoreLocalDraft() {
+      const saved = localStorage.getItem('aula_informatica_draft');
+      if (!saved) return false;
+
+      try {
+        const draft = JSON.parse(saved);
+        if (!draft.course || !draft.allStudents) return false;
+
+        document.getElementById('courseSelect').value = draft.course;
+        document.getElementById('moduleSelect').value = draft.module || '07:20 AM';
+
+        allStudents = draft.allStudents;
+        assignments = draft.assignments || {};
+
+        pcList.forEach(pc => {
+          if (!assignments[pc]) assignments[pc] = [];
+        });
+
+        const badge = document.getElementById('autoSaveBadge');
+        if (badge) badge.classList.remove('hidden');
+
+        renderUnassigned();
+        renderPCs();
+        return true;
+      } catch (e) {
+        console.error("Error al restaurar el borrador local:", e);
+        return false;
+      }
+    }
+
+    function clearLocalDraft() {
+      localStorage.removeItem('aula_informatica_draft');
+      const badge = document.getElementById('autoSaveBadge');
+      if (badge) badge.classList.add('hidden');
+    }
 
     function parseStudent(student) {
       const email = student.email || '';
@@ -226,9 +291,15 @@
       };
     }
 
-    async function loadStudents() {
+    async function loadStudents(userChangedCourse = false) {
       const groupEmail = document.getElementById('courseSelect').value;
       if (!groupEmail) return;
+
+      // Si el usuario cambia manualmente el selector de curso, reseteamos las asignaciones anteriores
+      if (userChangedCourse) {
+        pcList.forEach(pc => assignments[pc] = []);
+        selectedTopStudents = [];
+      }
 
       const unassignedList = document.getElementById('unassignedList');
       unassignedList.innerHTML = '<span class="text-mp-blue font-semibold text-xs animate-pulse">Cargando alumnos...</span>';
@@ -241,10 +312,9 @@
           allStudents = json.data.map(parseStudent);
           allStudents.sort((a, b) => a.surname.localeCompare(b.surname, 'es', { sensitivity: 'base' }));
 
-          selectedTopStudents = [];
-          pcList.forEach(pc => assignments[pc] = []);
           renderUnassigned();
           renderPCs();
+          saveLocalDraft();
         } else {
           unassignedList.innerHTML = `<span class="text-red-600 text-xs font-semibold">Error: ${json.message}</span>`;
         }
@@ -253,7 +323,6 @@
       }
     }
 
-    // FORMA 1: SELECCIÓN DIRECTA DESDE LA LISTA SUPERIOR
     function toggleTopStudentSelection(email) {
       const student = allStudents.find(s => s.email === email);
       if (!student) return;
@@ -291,14 +360,13 @@
 
       renderUnassigned();
       renderPCs();
+      saveLocalDraft();
     }
 
-    // RENDERIZAR LISTA SUPERIOR DE PENDIENTES
     function renderUnassigned() {
       const assignedEmails = Object.values(assignments).flat().map(s => s.email);
       const unassigned = allStudents.filter(s => !assignedEmails.includes(s.email));
 
-      // Limpiar seleccionados que ya se asignaron
       selectedTopStudents = selectedTopStudents.filter(s => !assignedEmails.includes(s.email));
 
       document.getElementById('unassignedCountBadge').innerText = unassigned.length;
@@ -310,7 +378,6 @@
         return;
       }
 
-      // Banner indicando selección de la lista superior
       if (selectedTopStudents.length > 0) {
         const banner = document.createElement('div');
         banner.className = 'w-full bg-blue-50 border border-blue-200 text-blue-900 rounded-lg p-2 flex justify-between items-center text-xs shadow-xs mb-1';
@@ -349,7 +416,6 @@
       container.appendChild(chipsContainer);
     }
 
-    // RENDERIZAR TARJETAS DE PC
     function renderPCs() {
       const grid = document.getElementById('pcGrid');
       grid.innerHTML = '';
@@ -386,14 +452,12 @@
 
         if (!isFull) {
           if (hasTopSelection) {
-            // Asignación rápida desde la selección superior
             actionButtonHTML = `
               <button onclick="assignTopSelectedToPC('${pcKey}')" class="w-full text-[10px] text-white font-bold text-center mt-2 bg-emerald-600 hover:bg-emerald-700 rounded py-1.5 shadow-xs transition-all animate-pulse">
                 ➕ Asignar aquí (${selectedTopStudents.length})
               </button>
             `;
           } else {
-            // Abrir ventana flotante
             actionButtonHTML = `
               <button onclick="openPCModal('${pcKey}')" class="w-full text-[10px] text-mp-blue font-bold text-center mt-2 bg-blue-50 hover:bg-blue-100 rounded py-1 border border-blue-200 transition-colors">
                 + Asignar alumnos
@@ -416,7 +480,6 @@
       });
     }
 
-    // FORMA 2: VENTANA FLOTANTE (MODAL CON BÚSQUEDA)
     function openPCModal(pcKey) {
       currentModalPC = pcKey;
       modalSelectedEmails = [];
@@ -520,12 +583,14 @@
       closeModal();
       renderUnassigned();
       renderPCs();
+      saveLocalDraft();
     }
 
     function unassignStudent(pcKey, email) {
       assignments[pcKey] = assignments[pcKey].filter(s => s.email !== email);
       renderUnassigned();
       renderPCs();
+      saveLocalDraft();
     }
 
     async function saveSnapshot() {
@@ -567,7 +632,8 @@
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(payload)
         });
-        alert("¡Registro guardado con éxito!");
+        alert("¡Registro guardado con éxito en Google Sheets!");
+        clearLocalDraft(); // Limpiar borrador tras enviar el registro definitivo
       } catch (e) {
         alert("Error al conectar con Google Sheets.");
       } finally {
@@ -576,7 +642,10 @@
       }
     }
 
-    renderPCs();
+    // Inicialización: Intentar restaurar borrador previo o renderizar vista vacía
+    if (!restoreLocalDraft()) {
+      renderPCs();
+    }
   </script>
 </body>
 </html>
